@@ -146,3 +146,62 @@ function App() {
 ```
 
 - 참고: https://reactrouter.com/en/main/components/navigate
+
+
+# routes.js를 만들어서 route하기
+1) src 폴더에 `routes.js` 파일을 만든다
+```js
+const routeList = [
+    {
+        path: "/",
+        component: Home,
+        requiresAuth: false
+    },
+    {
+        path: "/login",
+        component: Login,
+        requiresAuth: false
+    }, {
+        path: "/about",
+        component: About,
+        requiresAuth: false
+    },
+    {
+        path: "*",
+        component: NotFound,
+        requiresAuth: false
+    },
+    {
+        path: "/account/:username",
+        component: Profile,
+        requiresAuth: true
+    }
+]
+
+export default routeList
+```
+2) `App.js`안의 `Routes` 안에 `routeList`를 map 하기
+```js
+import routeList from './routes';
+
+function App() {
+
+  const [userName, setUserName] = useState("")
+  const [loggedIn, setLoggedIn] = useState(false)
+
+  return (
+    <Routes>
+      {
+        routeList.map((route) => {
+          if (route.requiresAuth && !loggedIn) {
+            return (<Route key={route.path} path={route.path} element={<Navigate to={"/login"} />} />)
+          } else {
+            return (<Route key={route.path} path={route.path} element={<route.component accountStatus={setLoggedIn} userName={setUserName} />} />)
+          }
+        })
+      }
+    </Routes>
+  );
+}
+```
+
